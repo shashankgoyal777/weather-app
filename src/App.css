@@ -14,7 +14,7 @@ body {
   height: 100vh;
   margin: auto;
   /* padding: 20px; */
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   /* background-color: hsl(0deg 0% 5.49%); */
   display: flex;
   justify-content: center;
@@ -27,7 +27,7 @@ body {
 .main {
   width: 100%;
   height: 100%;
-  border: 1px solid #ccc;
+  /* border: 1px solid #ccc; */
   display: flex;
   flex-direction: row;
   /* align-items: flex-start; */
@@ -99,8 +99,9 @@ body {
 
 .searchBar {
   height: 35px;
-  width: 80%;
+  width: 70%;
   padding: 0 20px;
+  margin-right: 15px;
   color: white;
   backdrop-filter: blur(1px) saturate(115%);
   -webkit-backdrop-filter: blur(1px) saturate(115%);
@@ -108,7 +109,8 @@ body {
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.125);
 }
-button {
+.searchBtn {
+  cursor: pointer;
   color: white;
   height: 35px;
   width: 20%;
@@ -117,6 +119,9 @@ button {
   background-color: rgba(17, 25, 40, 0);
   border-radius: 12px;
   border: 1px solid rgba(255, 255, 255, 0.125);
+}
+.searchBtn:hover {
+  background-color: rgba(17, 25, 40, 0.5);
 }
 
 .city-name {
@@ -131,6 +136,7 @@ button {
 
 .weather-info img {
   height: 150px;
+  filter: drop-shadow(2px 0px 0px #000000);
 }
 .temp {
   font-size: 6rem;
@@ -163,15 +169,16 @@ button {
   justify-content: center;
 
   backdrop-filter: blur(2px) saturate(115%);
-    -webkit-backdrop-filter: blur(2px) saturate(115%);
-    background-color: rgba(20, 26, 29, 0.20);
-    border-radius: 12px;
-    border: 1px solid rgba(255, 255, 255, 0.125);
-  }
+  -webkit-backdrop-filter: blur(2px) saturate(115%);
+  background-color: rgba(20, 26, 29, 0.2);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.125);
+}
 
 .right-top {
   display: flex;
   justify-content: center;
+  color: #c5c5c5;
 }
 
 /* Day Forecast Info Carousel */
@@ -203,9 +210,93 @@ button {
   align-items: center;
   justify-content: center;
 }
-.forecast-title{
+.day-card img {
+  height: 4.5em;
+  filter: drop-shadow(2px 0px 0px #000000);
+}
+.forecast-title {
   display: block;
   margin-left: 20px;
-  color:#c5c5c5
+  color: #c5c5c5;
   /* color:red; */
+}
+
+.mainTemp {
+  font-size: 4.5rem;
+  /* vertical-align: super; */
+  position: relative;
+  top: -20px;
+}
+
+@media (max-width: 767px) {
+  .container {
+    height: auto;
+  }
+  .main {
+    flex-direction: column;
+    padding: 1px;
+    height: auto;
+    overflow: visible;
+    gap: 5px;
+    /* border: red 2px solid; */
+  }
+  .mainTemp {
+    font-size: 3rem;
+    top: 10px;
+    vertical-align: super;
+  }
+
+  .left {
+    width: 100%;
+    height: auto;
+    gap: 5px;
+  }
+  .temp {
+    font-size: 4rem;
+  }
+  .city-name {
+    font-size: 2.4rem;
+    margin: 10px 0px 0px 7px;
+  }
+  .weather-info {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .weather-info img {
+    height: 100px;
+  }
+
+  .day-card {
+    height: 120px;
+  }
+
+  .day-card img {
+    width: 60px;
+    height: auto;
+  }
+
+  .right {
+    width: 100%;
+    height: auto;
+  }
+
+  .hourly-forecast {
+    flex-direction: row;
+    width: 100%;
+    height: auto;
+    /* border: red 2px solid; */
+  }
+  .searchBar {
+    margin-right: 2%;
+  }
+  .searchBtn {
+    width: 27%;
+  }
+  .hour-card {
+    width: 25%;
+    /* border: red 2px solid; */
+    height: 100%;
+    font-size: 0.8rem;
+  }
 }

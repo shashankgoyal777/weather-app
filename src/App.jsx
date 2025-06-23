@@ -1,13 +1,20 @@
 import { useEffect, useState } from "react";
-import reactLogo from "./assets/react.svg";
-import viteLogo from "/vite.svg";
+import React from "react";
+
+
+import dotenv from 'dotenv';
+// dotenv.config();
+
 import "./App.css";
 
 function App() {
+  const apikey=import.meta.env.VITE_API_KEY;
+
   const [cityName, setCityName] = useState("Bharatpur");
   const [searchedCity, setSearchedCity] = useState("");
+  // console.log("Searched: ", searchedCity);
 
-  const [country,setCountry]=useState("")
+  const [country, setCountry] = useState("");
   const [temp, setTemp] = useState(0);
   const [weather, setWeather] = useState(null);
   const [wind, setWind] = useState(null);
@@ -19,30 +26,27 @@ function App() {
   const [hourData, setHourData] = useState([]);
   const [dayData, setDayData] = useState([]);
   const api_url =
-    "https://api.weatherapi.com/v1/forecast.json?key=390dba3dd01144df907140923251906&q=" +
-    cityName +
-    "&days=7";
+    `https://api.weatherapi.com/v1/forecast.json?key=${apikey}&q= ${cityName}&days=7`;
 
   function getDataFromApi() {
-    
     fetch(api_url)
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-      alert(data.error.message); // ✅ This is your API's error format
-    } 
+          alert(data.error.message); // ✅ This is your API's error format
+        }
 
         console.log(data);
         console.log("temp= ", data.current.temp_c);
 
         setCountry(data.location.country);
-        setTemp(Math.round(data.current.temp_c));
+        setTemp(Math.floor(data.current.temp_c));
         setWind(data.current.wind_kph);
         setWeather(data.current.condition.text);
         setCurrentWeatherImg(data.current.condition.icon);
         setHumidity(data.current.humidity);
-        setHigh(Math.round(data.forecast.forecastday[0].day.maxtemp_c));
-        setLow(Math.round(data.forecast.forecastday[0].day.mintemp_c));
+        setHigh(Math.floor(data.forecast.forecastday[0].day.maxtemp_c));
+        setLow(Math.floor(data.forecast.forecastday[0].day.mintemp_c));
 
         setHourData(data.forecast.forecastday[0].hour);
         setDayData(data.forecast.forecastday);
@@ -52,16 +56,18 @@ function App() {
         console.error("Error fetching weather data:", error);
         alert(error.message);
       });
-      
-
-    }
-
-  const handleSearch=()=>{
-      setCityName(searchedCity);
-      console.log("CityName inside handle Search: ", cityName);
-      // getDataFromApi();
   }
 
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!searchedCity.trim()) {
+      alert("Please enter a city name : )");
+      return;
+    } else {
+      setCityName(searchedCity);
+      setSearchedCity("");
+    }
+  };
 
   useEffect(() => {
     getDataFromApi();
@@ -82,10 +88,7 @@ function App() {
     return timeToReturn + ampm;
   };
 
-  const now = new Date();
-  console.log("now:", now.getHours());
-
-
+  const currentDate = new Date();
 
   return (
     <>
@@ -95,23 +98,39 @@ function App() {
         <div className="main">
           <div className="left">
             <div className="top">
-              <input
-                onChange={(e) => setSearchedCity(e.target.value)}
-                type="text"
-                placeholder="Search for a city..."
-                className="searchBar"
-              />
-              <button onClick={(e) => {handleSearch()} }>Search</button>
-              <p className="city-name">{cityName}, {country}</p>
+              <form
+                onSubmit={(e) => {
+                  handleSearch(e);
+                }}
+              >
+                <input
+                  type="text"
+                  onChange={(e) => {
+                    setSearchedCity(e.target.value);
+                  }}
+                  value={searchedCity}
+                  placeholder="Search for a city..."
+                  className="searchBar"
+                />
+
+                <input type="submit" className="searchBtn" Search />
+              </form>
+
+              <p className="city-name">
+                {cityName}, {country}
+              </p>
               <div className="weather-info">
                 <div>
-                  <img src={currentWeatherImg} alt="Weather Icon" />
-                  <p className="high">High: {high}°C</p>
-                  <p className="low">Low: {low}°C</p>
+                  <img
+                    src={currentWeatherImg.replace("64x64", "128x128")}
+                    alt="Weather Icon"
+                  />
+                  <p className="high">High: {high} <span>°C </span></p>
+                  <p className="low">Low: {low} <span>°C</span></p>
                 </div>
 
                 <div className="info-right">
-                  <h2 className="temp">{temp}°C</h2>
+                  <h2 className="temp">{temp}<span className="mainTemp">°C </span></h2>
                   <h2 className="weather">{weather}</h2>
 
                   <p className="wind">Wind: {wind} kph</p>
@@ -127,9 +146,12 @@ function App() {
                   return (
                     <div key={index} className="day-card">
                       <p>{getDayName(day.date)}</p>
-                      <img src={day.day.condition.icon} alt="Weather Icon" />
+                      <img
+                        src={day.day.condition.icon.replace("64x64", "128x128")}
+                        alt="Weather Icon"
+                      />
                       <p className="day-temp">
-                        {Math.round(day.day.maxtemp_c)}°C
+                        {Math.floor(day.day.maxtemp_c)}°C
                       </p>
                     </div>
                   );
@@ -144,13 +166,13 @@ function App() {
             <div className="hourly-forecast">
               {hourData.map((hour, index) => {
                 const hourvalue = new Date(hour.time).getHours();
-                if (hourvalue < now.getHours()) return null;
+                if (hourvalue < currentDate.getHours()) return null;
                 return (
                   <div key={index} className="hour-card">
                     <p>{ampm(hour.time)}</p>
 
                     <img src={hour.condition.icon} alt="Weather Icon" />
-                    <p>{Math.round(hour.temp_c)}°C</p>
+                    <p>{Math.floor(hour.temp_c)}°C</p>
                   </div>
                 );
               })}
