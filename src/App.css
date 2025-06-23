@@ -268,7 +268,7 @@ body {
   }
 
   .day-card {
-    height: 120px;
+    height: 10px;
   }
 
   .day-card img {
@@ -296,7 +296,7 @@ body {
   .hour-card {
     width: 30%;
     /* border: red 2px solid; */
-    height: 40%;
+    height: 15vh;
     font-size: 0.8rem;
   }
 }
