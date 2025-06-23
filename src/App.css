@@ -19,7 +19,7 @@ body {
   display: flex;
   justify-content: center;
 
-  background-image: url("background-image.jpg");
+  background-image: url('assets/background-image.jpg');
   background-size: cover; /* Ensures the image covers the whole div */
   background-position: right center; /* Centers the image */
   background-repeat: no-repeat;
