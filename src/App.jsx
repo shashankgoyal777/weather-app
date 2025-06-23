@@ -1,18 +1,18 @@
 import { useEffect, useState } from "react";
-import React from "react";
 
-
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 // dotenv.config();
 
 import "./App.css";
 
 function App() {
-  const apikey=import.meta.env.VITE_API_KEY;
+  const apikey = import.meta.env.VITE_API_KEY;
+  const [loader, setLoader] = useState(false);
 
-  const [cityName, setCityName] = useState("Bharatpur");
-  const [searchedCity, setSearchedCity] = useState("");
-  // console.log("Searched: ", searchedCity);
+  const [cityName, setCityName] = useState("");
+  const [cityToSearch, setCityToSearch] = useState("");
+
+  const [cityNameToDisplay, setCityNameToDisplay] = useState("Your Location");
 
   const [country, setCountry] = useState("");
   const [temp, setTemp] = useState(0);
@@ -25,20 +25,27 @@ function App() {
 
   const [hourData, setHourData] = useState([]);
   const [dayData, setDayData] = useState([]);
-  const api_url =
-    `https://api.weatherapi.com/v1/forecast.json?key=${apikey}&q= ${cityName}&days=7`;
+  const api_url = `https://api.weatherapi.com/v1/forecast.json?key=${apikey}&q= ${cityName}&days=7`; //Currently Not in use
 
-  function getDataFromApi() {
-    fetch(api_url)
+  async function getDataFromApi(cityNameForApi) {
+    console.log("city name for api:", cityNameForApi);
+    fetch(
+      "https://api.weatherapi.com/v1/forecast.json?key=" +
+        apikey +
+        "&q=" +
+        cityNameForApi +
+        "&days=7"
+    )
       .then((response) => response.json())
       .then((data) => {
-        if (data.error) {
-          alert(data.error.message); // ✅ This is your API's error format
-        }
+        // if (data.error) {
+        //   alert(data.error.message); // ✅ This is your API's error format
+        // }
 
         console.log(data);
         console.log("temp= ", data.current.temp_c);
 
+        setCityNameToDisplay(data.location.name);
         setCountry(data.location.country);
         setTemp(Math.floor(data.current.temp_c));
         setWind(data.current.wind_kph);
@@ -54,25 +61,57 @@ function App() {
       })
       .catch((error) => {
         console.error("Error fetching weather data:", error);
-        alert(error.message);
+        // alert(error.message);
       });
   }
 
-  const handleSearch = (e) => {
-    e.preventDefault();
-    if (!searchedCity.trim()) {
-      alert("Please enter a city name : )");
-      return;
-    } else {
-      setCityName(searchedCity);
-      setSearchedCity("");
-    }
+  const getLocation = async () => {
+    console.log("GEOLOCATION IS CALLED");
+
+    return new Promise((resolve, reject) => {
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const { latitude, longitude } = pos.coords;
+          console.log("Your location:", latitude, longitude);
+          const coord = latitude + "," + longitude;
+          setCityName(coord);
+          resolve(coord);
+          console.log("City Name inside Getlocation:", cityName);
+        },
+        (err) => {
+          reject(err);
+          console.error("Location error:", err);
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 10000,
+          maximumAge: 0,
+        }
+      );
+    });
   };
 
   useEffect(() => {
-    getDataFromApi();
-  }, [cityName]);
+    const getLocationAndCallApi = async () => {
+      // Get user's current location
+      const latlong = await getLocation();
+      console.log("LatLong:", latlong);
 
+      await getDataFromApi(latlong);
+    };
+    getLocationAndCallApi();
+  }, []);
+
+  const handleSearch = (e) => {
+    e.preventDefault();
+    if (!cityToSearch.trim()) {
+      alert("Please enter a city name : )");
+      return;
+    } else {
+      getDataFromApi(cityToSearch);
+      setCityToSearch("");
+    }
+  };
   // Function to get the day name from a date string
   const getDayName = (dateString) => {
     const date = new Date(dateString);
@@ -83,17 +122,29 @@ function App() {
     const newdate = new Date(date);
     const hour = newdate.getHours();
     // console.log("Hour:",date);
-    const ampm = hour >= 12 ? "PM" : "AM";
+    const ampm = hour >= 12 ? ":00 PM" : ":00 AM";
     const timeToReturn = hour % 12 || 12;
     return timeToReturn + ampm;
   };
 
   const currentDate = new Date();
 
-  return (
+  return loader ? (
+    
+<div id="container">
+  <div id="square" class="shimmer"></div>
+  <div id="content">
+    <div id="content-title" class="shimmer"></div>
+    <div id="content-desc">
+      <div class="line shimmer"></div>
+      <div class="line shimmer"></div>
+      <div class="line shimmer"></div>
+      <div class="line shimmer"></div>
+    </div>
+  </div>
+</div>
+  ) : (
     <>
-      {/* Shree Ram */}
-
       <div className="container">
         <div className="main">
           <div className="left">
@@ -106,9 +157,9 @@ function App() {
                 <input
                   type="text"
                   onChange={(e) => {
-                    setSearchedCity(e.target.value);
+                    setCityToSearch(e.target.value);
                   }}
-                  value={searchedCity}
+                  value={cityToSearch}
                   placeholder="Search for a city..."
                   className="searchBar"
                 />
@@ -117,7 +168,7 @@ function App() {
               </form>
 
               <p className="city-name">
-                {cityName}, {country}
+                {cityNameToDisplay}, {country}
               </p>
               <div className="weather-info">
                 <div>
@@ -125,12 +176,19 @@ function App() {
                     src={currentWeatherImg.replace("64x64", "128x128")}
                     alt="Weather Icon"
                   />
-                  <p className="high">High: {high} <span>°C </span></p>
-                  <p className="low">Low: {low} <span>°C</span></p>
+                  <p className="high">
+                    High: {high} <span>°C </span>
+                  </p>
+                  <p className="low">
+                    Low: {low} <span>°C</span>
+                  </p>
                 </div>
 
                 <div className="info-right">
-                  <h2 className="temp">{temp}<span className="mainTemp">°C </span></h2>
+                  <h2 className="temp">
+                    {temp}
+                    <span className="mainTemp">°C </span>
+                  </h2>
                   <h2 className="weather">{weather}</h2>
 
                   <p className="wind">Wind: {wind} kph</p>
