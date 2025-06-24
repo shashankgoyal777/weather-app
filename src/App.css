@@ -32,7 +32,7 @@ body {
   flex-direction: row;
   /* align-items: flex-start; */
   /* justify-content: space-evenly; */
-  justify-content: center;
+  /* justify-content: center; */
   padding: 30px 60px;
   gap: 15px;
   backdrop-filter: blur(11px) saturate(200%);
@@ -199,7 +199,7 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
+  /* justify-content: center; */
   gap: 10px;
   overflow: auto;
 }
@@ -236,7 +236,7 @@ body {
     flex-direction: column;
     padding: 1px;
     height: auto;
-    overflow: visible;
+    overflow:auto;
     gap: 5px;
     /* border: red 2px solid; */
   }
@@ -248,7 +248,7 @@ body {
 
   .left {
     width: 100%;
-    height: auto;
+   height: 60vh;
     gap: 5px;
   }
   .temp {
@@ -262,13 +262,24 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    margin-left: 7px;
   }
   .weather-info img {
-    height: 100px;
+    height: 120px;
   }
 
+.days-forecast{
+  display: flex;
+  flex-direction: column  ;
+  height: 45%;
+  justify-content: center;
+  /* align-items: center; */
+
+  /* background-color: red; */
+}
   .day-card {
-    height: 10px;
+    height: 120px;
+    
   }
 
   .day-card img {
@@ -278,13 +289,17 @@ body {
 
   .right {
     width: 100%;
-    height: auto;
+    height: 40%;
+
+    /* margin-top: 20px; */
   }
 
+  
   .hourly-forecast {
     flex-direction: row;
     width: 100%;
     height: auto;
+    min-height: 30vh;
     /* border: red 2px solid; */
   }
   .searchBar {
@@ -296,7 +311,7 @@ body {
   .hour-card {
     width: 30%;
     /* border: red 2px solid; */
-    height: 15vh;
+    height: 14vh;
     font-size: 0.8rem;
   }
 }
