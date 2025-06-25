@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
-import dotenv from "dotenv";
-// dotenv.config();
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 import "./App.css";
 
@@ -38,9 +38,9 @@ function App() {
     )
       .then((response) => response.json())
       .then((data) => {
-        // if (data.error) {
-        //   alert(data.error.message); // ✅ This is your API's error format
-        // }
+        if (data.error) {
+         toast(data.error.message) // ✅ This is your API's error format
+        }
 
         console.log(data);
         console.log("temp= ", data.current.temp_c);
@@ -62,10 +62,11 @@ function App() {
       .catch((error) => {
         console.error("Error fetching weather data:", error);
         // alert(error.message);
-      }).finally(() => {
+      })
+      .finally(() => {
         setLoader(false);
         console.log("Loader is set to false");
-      })
+      });
   }
 
   const getLocation = async () => {
@@ -108,7 +109,10 @@ function App() {
   const handleSearch = (e) => {
     e.preventDefault();
     if (!cityToSearch.trim()) {
-      alert("Please enter a city name : )");
+      // alert("Please enter a city name : )");
+      toast.error("Please enter a city name : )", {
+      });
+
       return;
     } else {
       getDataFromApi(cityToSearch);
@@ -264,6 +268,18 @@ function App() {
           </div>
         </div>
       </div>
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick={false}
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+      />
     </>
   );
 }
