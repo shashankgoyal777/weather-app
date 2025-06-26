@@ -39,7 +39,7 @@ function App() {
       .then((response) => response.json())
       .then((data) => {
         if (data.error) {
-         toast(data.error.message) // ✅ This is your API's error format
+          toast(data.error.message);
         }
 
         console.log(data);
@@ -84,11 +84,19 @@ function App() {
         },
         (err) => {
           reject(err);
-          console.error("Location error:", err);
+          toast.error("Please Allow Location");
+        
+
+          //Loading site with Default data
+          setTimeout(()=>{
+
+            toast("Loading Default...")
+            getDataFromApi("Delhi India");
+          },5000)
         },
         {
           enableHighAccuracy: true,
-          timeout: 10000,
+          timeout: 7000,
           maximumAge: 0,
         }
       );
@@ -98,6 +106,7 @@ function App() {
   useEffect(() => {
     const getLocationAndCallApi = async () => {
       // Get user's current location
+
       const latlong = await getLocation();
       console.log("LatLong:", latlong);
 
@@ -110,8 +119,7 @@ function App() {
     e.preventDefault();
     if (!cityToSearch.trim()) {
       // alert("Please enter a city name : )");
-      toast.error("Please enter a city name : )", {
-      });
+      toast.error("Please enter a city name : )", {});
 
       return;
     } else {
@@ -268,18 +276,6 @@ function App() {
           </div>
         </div>
       </div>
-      <ToastContainer
-        position="top-right"
-        autoClose={5000}
-        hideProgressBar={false}
-        newestOnTop={false}
-        closeOnClick={false}
-        rtl={false}
-        pauseOnFocusLoss
-        draggable
-        pauseOnHover
-        theme="dark"
-      />
     </>
   );
 }
